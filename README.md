@@ -2,17 +2,16 @@
 
 `gitx` is a Go-based command-line tool providing enhanced git workflows.
 
+
 ## Commands
 
 ### `reclone`
-
 Deletes and re-clones a repository.
 
 **Usage:**
 ```bash
 gitx reclone [path] [flags]
 ```
-
 **Flags:**
 - `--force`, `-f`: Skip all confirmations.
 - `--depth <n>`: Perform a shallow clone.
@@ -26,28 +25,56 @@ Due to file locking in Windows, if you are currently inside the repository direc
 gitx reclone ./my-repo
 ```
 
-## Build and Install
+### `master`
+Switches to the `master` branch and runs `git pull --all`.
 
-### Local Build
-To create a binary in the current folder:
+**Usage:**
+```bash
+gitx master
+```
+Shows all git output and a summary. Fails if the branch does not exist.
+
+### `main`
+Switches to the `main` branch and runs `git pull --all`.
+
+**Usage:**
+```bash
+gitx main
+```
+Shows all git output and a summary. Fails if the branch does not exist.
+
+
+## Build and Deploy
+
+### Build
+To build with a specific version:
 ```powershell
-go build -o gitx.exe ./cmd/gitx
-# You can now run it as:
-.\gitx reclone
+./build.ps1 v0.1.0
+# or just ./build.ps1 for dev build
 ```
 
-### Global Install
-To make `gitx` available everywhere as a command:
+### Deploy
+To copy the binary to your Go bin directory (or specify a target):
 ```powershell
-go install ./cmd/gitx
-# You can now run it anywhere as:
-gitx reclone
+./deploy.ps1
+# or ./deploy.ps1 C:\some\other\dir
 ```
+
+## Versioning Best Practices
+1. **Semantic Versioning (SemVer):** Use `vMAJOR.MINOR.PATCH` (e.g., `v0.1.0`).
+2. **Build-Time Injection:** Use `-ldflags` to inject the version from your CI/CD or Git tags. This ensures the binary always knows exactly which version it is.
+3. **Git Tags:** Always tag your releases in Git:
+   ```bash
+   git tag -a v0.1.0 -m "Release version 0.1.0"
+   git push origin v0.1.0
+   ```
 
 ## Project Structure
 
 - `cmd/gitx/`: Entry point and root command.
 - `internal/reclone/`: Logic for the `reclone` command.
-- `internal/git/`: Git utility functions.
+- `internal/git/`: Git utility functions (including branch switching and pulling).
 - `internal/fs/`: File system utilities (including safe delete).
 - `pkg/prompt/`: Interactive prompt utilities.
+- `build.ps1`: PowerShell build script.
+- `deploy.ps1`: PowerShell deploy script.
